@@ -1,0 +1,80 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: docker-nginx-prod
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
+    depends_on:
+      - question
+      - questionnaire
+    networks:
+      - lesson-prod-network
+
+  question:
+    build:
+      dockerfile: Dockerfile.prod
+      context: ./question
+    container_name: docker-question-prod
+    restart: unless-stopped
+    command: serve -s build -l 3000
+#    volumes:
+#      - ./question:/app
+#      - /app/node_modules
+    networks:
+      - lesson-prod-network
+
+  questionnaire:
+    build:
+      dockerfile: Dockerfile.prod
+      context: ./questionnaire
+    env_file: .env
+    container_name: docker-questionnaire-prod
+    command: npm run start
+    restart: on-failure
+#    environment:
+#      - SERVICE_PORT
+#      - MONGODB_PORT=${MONGODB_PORT}
+#      - MONGODB_HOST=${MONGODB_HOST}
+#      - MONGODB_INITDB_DATABASE=${MONGODB_INITDB_DATABASE}
+#      - APP_MONGODB_ADMINUSERNAME=${APP_MONGODB_ADMINUSERNAME}
+#      - APP_MONGODB_ADMINPASSWORD=${APP_MONGODB_ADMINPASSWORD}
+    #    ports:
+    #      - ${AUTH_PORT}:${AUTH_PORT}
+#    volumes:
+#      - ./questionnaire/src:/app/src
+#      - /app/node_modules
+    #    links:
+    #      - db
+    depends_on:
+      - mongo_db
+    networks:
+      - lesson-prod-network
+
+  mongo_db:
+    image: mongo:latest
+    container_name: mongo_db
+    env_file:
+      - .env
+#    ports:
+#      - "27018:27017"
+    restart: always
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: ${APP_MONGODB_ADMINUSERNAME}
+#      MONGO_INITDB_ROOT_PASSWORD: ${APP_MONGODB_ADMINPASSWORD}
+#      MONGO_INITDB_DATABASE: ${MONGODB_INITDB_DATABASE}
+    volumes:
+      - mongo_db:/data/db
+      - ./mongo/init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - lesson-prod-network
+
+volumes:
+  mongo_db:
+
+networks:
+  lesson-prod-network:
+    driver: bridge

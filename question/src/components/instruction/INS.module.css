@@ -1,0 +1,9 @@
+.container {
+    max-width: 99%;
+    display: block;
+    text-align: center;
+    justify-content: center;
+    /*padding: 10px;*/
+    /*border-radius: 10px;*/
+    /*border: #61dafb solid 1px;*/
+}

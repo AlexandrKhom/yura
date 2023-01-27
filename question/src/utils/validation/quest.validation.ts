@@ -1,0 +1,25 @@
+import Joi from "joi";
+
+export const schema = Joi.object({
+    firstName: Joi.string().min(1).max(35).required(),
+    phoneNumber: Joi.string().regex(/^[+][0-9]{12}$/).required(),
+    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
+    chanelSpeak: Joi.array().items(Joi.string().required()),
+    visitSpeak: Joi.string().required(),
+    companyName: Joi.string().required(),
+    serviceArea: Joi.string().required(),
+    uniqueProduct: Joi.string().required(),
+    currentWeb: Joi.optional().allow(''),
+    needToDo: Joi.string().required(),
+    term: Joi.number().min(1).max(999).required(),
+    budget: Joi.number().required(),
+    start: Joi.string().required(),
+    aboutClients: Joi.string().required(),
+    aboutCompetitors: Joi.string().required(),
+    designWeb: Joi.string().required(),
+    elementsWeb: Joi.string().required(),
+    pagesWeb: Joi.string().required(),
+    functionalWeb: Joi.string().required(),
+    contentWeb: Joi.array().items(Joi.string().required().required()).required(),
+    forgot: Joi.optional().allow(''),
+});

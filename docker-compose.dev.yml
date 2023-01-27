@@ -1,0 +1,83 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: docker-nginx-dev
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf.dev:/etc/nginx/conf.d/nginx.conf
+    depends_on:
+      - question
+      - questionnaire
+    restart: on-failure
+    networks:
+      - lesson-dev-network
+
+  question:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./question
+    container_name: docker-question-dev
+    restart: on-failure
+    command: npm run start:dev
+    environment:
+      - WATCHPACK_POLLING=true # create-ui-app >= 5.x
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./question:/app
+      - /app/node_modules
+    networks:
+      - lesson-dev-network
+
+  questionnaire:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./questionnaire
+    container_name: docker-questionnaire-dev
+    env_file: .env
+    command: npm run start:debug
+    restart: on-failure
+#    environment:
+#      - AUTH_PORT
+#      - MONGODB_PORT=${MONGODB_PORT}
+#      - MONGODB_HOST=${MONGODB_HOST}
+#      - MONGODB_INITDB_DATABASE=${MONGODB_INITDB_DATABASE}
+#      - APP_MONGODB_ADMINUSERNAME=${APP_MONGODB_ADMINUSERNAME}
+#      - APP_MONGODB_ADMINPASSWORD=${APP_MONGODB_ADMINPASSWORD}
+    volumes:
+      - ./questionnaire/src:/app/src
+      - /app/node_modules
+#    links:
+#      - db
+    depends_on:
+      - mongo_db
+    networks:
+      - lesson-dev-network
+
+  mongo_db:
+    image: mongo:latest
+    container_name: mongo_db
+    env_file:
+      - .env
+#    ports:
+#      - "27018:27017"
+    restart: on-failure
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: ${APP_MONGODB_ADMINUSERNAME}
+#      MONGO_INITDB_ROOT_PASSWORD: ${APP_MONGODB_ADMINPASSWORD}
+#      MONGO_INITDB_DATABASE: ${MONGODB_INITDB_DATABASE}
+    volumes:
+      - ./mongo_db:/data/db
+      - ./mongo/init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - lesson-dev-network
+
+volumes:
+  mongo_db:
+
+networks:
+  lesson-dev-network:
+    driver: bridge

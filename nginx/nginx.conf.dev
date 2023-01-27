@@ -1,0 +1,19 @@
+server {
+  listen 80;
+
+  server_name alex-dev.com;
+
+  location / {
+    proxy_pass http://question:3000;
+    # Needed for sockets
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+  }
+
+  location /questionnaire {
+    proxy_pass http://questionnaire:5000;
+    rewrite ^/questionnaire/(.*) /$1 break;
+  }
+}

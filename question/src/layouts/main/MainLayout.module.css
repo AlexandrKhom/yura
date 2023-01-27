@@ -1,0 +1,14 @@
+.header{
+    display: flex;
+    justify-content: space-around;
+    background-color: #3b7ca6;
+}
+.header a{
+    text-decoration: none;
+    color: #6fab9c;
+    font-size: 50px;
+}
+
+.header a[class='active']{
+    color: #4d124d;
+}

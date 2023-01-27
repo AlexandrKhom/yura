@@ -1,0 +1,2 @@
+declare const insertResultSheets: (firstName: any, phoneNumber: any, email: any, chanelSpeak: any, visitSpeak: any, companyName: any, serviceArea: any, uniqueProduct: any, currentWeb: any, needToDo: any, term: any, budget: any, start: any, aboutClients: any, aboutCompetitors: any, designWeb: any, elementsWeb: any, pagesWeb: any, functionalWeb: any, contentWeb: any, forgot: any) => Promise<import("gaxios").GaxiosResponse<import("googleapis").sheets_v4.Schema$AppendValuesResponse>>;
+export { insertResultSheets };

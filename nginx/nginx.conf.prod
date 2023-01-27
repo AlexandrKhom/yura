@@ -1,0 +1,14 @@
+server {
+  listen 80;
+
+  server_name 3.70.246.0;
+
+  location / {
+    proxy_pass http://question:3000;
+  }
+
+  location /questionnaire {
+    proxy_pass http://questionnaire:5000;
+    rewrite ^/questionnaire/(.*) /$1 break;
+  }
+}
